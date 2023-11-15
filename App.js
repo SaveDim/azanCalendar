@@ -1,18 +1,40 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, } from 'react-native';
+import React from "react";
+import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 const HomeScreen = () => (
-  <View style={styles.container}>
-    <Text style={styles.screenText}>Home Screen</Text>
-  </View>
+  <ImageBackground
+    source={require('./assets/testphotos/background.jpg')}
+    style={styles.backgroundImage}
+  >
+    <View style={styles.container}>
+      <Text style={styles.screenText}>Home Screen</Text>
+    </View>
+  </ImageBackground>
 );
 
 const AzanCalendarScreen = () => (
-  <View style={styles.container}>
-    <Text style={styles.screenText}>Azan Calendar Screen</Text>
-  </View>
+  <ImageBackground
+    source={require('./assets/testphotos/background.jpg')}
+    style={styles.backgroundImage}
+  >
+    <View style={styles.container}>
+      <Text style={styles.screenText}>Azan Calendar Screen</Text>
+    </View>
+  </ImageBackground>
+
+);
+
+const SettingsScreen = () => (
+  <ImageBackground
+    source={require('./assets/testphotos/background.jpg')}
+    style={styles.backgroundImage}
+  >
+    <View style={styles.container}>
+      <Text style={styles.screenText}>Settings Screen</Text>
+    </View>
+  </ImageBackground>
 );
 
 const Tab = createBottomTabNavigator();
@@ -29,6 +51,7 @@ const App = () => {
       >
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Azan Calendar" component={AzanCalendarScreen} />
+        <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
@@ -42,15 +65,20 @@ const styles = StyleSheet.create({
   },
   screenText: {
     fontSize: 24,
+    color: 'white',
   },
   bottomTabBar: {
     backgroundColor: 'white',
-    borderTopWidth: 1,
-    borderTopColor: 'gray',
-    paddingBottom: 5,
+    borderTopWidth: 0,
   },
   tabLabel: {
     fontSize: 16,
+    color: 'black',
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
   },
 });
 
