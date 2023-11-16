@@ -3,6 +3,10 @@ import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+
+// TODO: изменить код так, чтобы запрос счетчика не делался, если отсчет идет.
+
+
 const HomeScreen = () => {
   const [nextPrayer, setNextPrayer] = useState("");
   const [countdown, setCountdown] = useState(0);
