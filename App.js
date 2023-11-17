@@ -3,10 +3,6 @@ import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-
-// TODO: изменить код так, чтобы запрос счетчика не делался, если отсчет идет.
-
-
 const HomeScreen = () => {
   const [nextPrayer, setNextPrayer] = useState("");
   const [countdown, setCountdown] = useState(0);
@@ -17,7 +13,6 @@ const HomeScreen = () => {
 
   const validPrayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
-  // Функция для запроса времен молитв
   const fetchPrayerTimes = useCallback(async () => {
     try {
       const today = new Date();
@@ -47,25 +42,31 @@ const HomeScreen = () => {
     const [hours, minutes] = prayerTime.split(':');
     const prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
     const timeDiff = prayerDate - now;
-    setCountdown(timeDiff > 0 ? Math.floor(timeDiff / 1000) : 0);
 
-    const countdownInterval = setInterval(() => {
-      setCountdown((prevCountdown) => (prevCountdown > 0 ? prevCountdown - 1 : 0));
-    }, 1000);
+    // Если время до молитвы истекло, начинаем обратный отсчет
+    if (timeDiff > 0) {
+      setCountdown(timeDiff); // Устанавливаем исходное значение времени до молитвы
 
-    // Остановка интервала и новый запрос после завершения обратного отсчета
-    setTimeout(() => {
-      clearInterval(countdownInterval);
-      fetchPrayerTimes(); // Запускаем новый запрос
-    }, timeDiff);
+      const countdownInterval = setInterval(() => {
+        setCountdown(prevCountdown => (prevCountdown > 0 ? prevCountdown - 1000 : 0));
+      }, 1000);
 
-    return () => clearInterval(countdownInterval);
+      // Остановка интервала и новый запрос после завершения обратного отсчета
+      setTimeout(() => {
+        clearInterval(countdownInterval);
+        fetchPrayerTimes(); // Запускаем новый запрос
+      }, timeDiff);
+
+      return () => clearInterval(countdownInterval);
+    }
   };
 
-  const formatTime = (seconds) => {
+  const formatTime = (milliseconds) => {
+    const seconds = Math.floor(milliseconds / 1000);
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-    return `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+    const secs = seconds % 60;
+    return `${hours}:${minutes < 10 ? '0' : ''}${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
   return (
