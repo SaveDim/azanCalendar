@@ -4,7 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Table, Row, Rows } from 'react-native-table-component';
 
-
+// TODO: Get gps position from user to replace variable putted into api
 
 const HomeScreen = () => {
   const [nextPrayer, setNextPrayer] = useState("");
@@ -110,15 +110,22 @@ const AzanCalendarScreen = () => {
     const formattedData = prayerTimesData.map(day => {
       const formattedDay = [];
       formattedDay.push(day.date.readable);
-      formattedDay.push(day.timings.Fajr);
-      formattedDay.push(day.timings.Dhuhr);
-      formattedDay.push(day.timings.Asr);
-      formattedDay.push(day.timings.Maghrib);
-      formattedDay.push(day.timings.Isha);
+
+      // Функция для удаления (+03) из времени
+      const removeTimezone = time => {
+        const timeWithoutTimezone = time.split(" ")[0];
+        return timeWithoutTimezone;
+      };
+
+      formattedDay.push(removeTimezone(day.timings.Fajr));
+      formattedDay.push(removeTimezone(day.timings.Dhuhr));
+      formattedDay.push(removeTimezone(day.timings.Asr));
+      formattedDay.push(removeTimezone(day.timings.Maghrib));
+      formattedDay.push(removeTimezone(day.timings.Isha));
       return formattedDay;
     });
     return formattedData;
-  };
+};
 
   // Заголовки для таблицы
   const tableHead = ["Date", "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
