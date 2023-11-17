@@ -109,7 +109,10 @@ const AzanCalendarScreen = () => {
   const formatPrayerData = () => {
     const formattedData = prayerTimesData.map(day => {
       const formattedDay = [];
-      formattedDay.push(day.date.readable);
+      const dateArray = day.date.readable.split(' '); // Разбиваем строку на массив по пробелу
+      const dateNumber = dateArray[0]; // Берем второй элемент массива (число)
+
+      formattedDay.push(dateNumber);
 
       // Функция для удаления (+03) из времени
       const removeTimezone = time => {
