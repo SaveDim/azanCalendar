@@ -2,6 +2,9 @@ import React, { useState, useEffect, useCallback } from "react";
 import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Table, Row, Rows } from 'react-native-table-component';
+
+
 
 const HomeScreen = () => {
   const [nextPrayer, setNextPrayer] = useState("");
@@ -80,17 +83,61 @@ const HomeScreen = () => {
   );
 };
 
-const AzanCalendarScreen = () => (
-  <ImageBackground
-    source={require('./assets/testphotos/background.jpg')}
-    style={styles.backgroundImage}
-  >
-    <View style={styles.container}>
-      <Text style={styles.screenText}>Azan Calendar Screen</Text>
-    </View>
-  </ImageBackground>
+const AzanCalendarScreen = () => {
+  const [prayerTimesData, setPrayerTimesData] = useState([]);
 
-);
+  useEffect(() => {
+    const fetchPrayerTimes = async () => {
+      try {
+        const response = await fetch(
+          'http://api.aladhan.com/v1/calendarByCity/2017/4?city=Alanya&country=Turkey&method=2'
+        );
+        const data = await response.json();
+        const prayerData = data.data;
+
+        // Устанавливаем данные о времени молитв в состояние
+        setPrayerTimesData(prayerData);
+      } catch (error) {
+        console.error("Ошибка загрузки данных:", error);
+      }
+    };
+
+    fetchPrayerTimes();
+  }, []);
+
+  // Функция для форматирования данных в нужный вид для таблицы
+  const formatPrayerData = () => {
+    const formattedData = prayerTimesData.map(day => {
+      const formattedDay = [];
+      formattedDay.push(day.date.readable);
+      formattedDay.push(day.timings.Fajr);
+      formattedDay.push(day.timings.Dhuhr);
+      formattedDay.push(day.timings.Asr);
+      formattedDay.push(day.timings.Maghrib);
+      formattedDay.push(day.timings.Isha);
+      return formattedDay;
+    });
+    return formattedData;
+  };
+
+  // Заголовки для таблицы
+  const tableHead = ["Date", "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+
+  return (
+    <ImageBackground
+      source={require('./assets/testphotos/background.jpg')}
+      style={styles.backgroundImage}
+    >
+      <View style={styles.tableContainer}>
+        <Text style={styles.screenText}>Azan Calendar Screen</Text>
+        <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
+          <Row data={tableHead} style={styles.head} textStyle={styles.text} />
+          <Rows data={formatPrayerData()} textStyle={styles.text} />
+        </Table>
+      </View>
+    </ImageBackground>
+  );
+};
 
 const SettingsScreen = () => (
   <ImageBackground
@@ -131,6 +178,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     height: '100%',
   },
+  tableContainer: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+  head: { height: 40, backgroundColor: '#f1f8ff' },
+  text: { margin: 6 },
   screenText: {
     fontSize: 24,
     color: 'white',
