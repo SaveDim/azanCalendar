@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { ImageBackground, StyleSheet, Text, View } from 'react-native';
+import {ImageBackground, StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Table, Row, Rows } from 'react-native-table-component';
@@ -134,18 +134,15 @@ const AzanCalendarScreen = () => {
   const tableHead = ["Date", "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
   return (
-    <ImageBackground
-      source={require('./assets/testphotos/background.jpg')}
-      style={styles.backgroundImage}
-    >
-      <View style={styles.tableContainer}>
-        <Text style={styles.screenText}>Azan Calendar Screen</Text>
-        <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
-          <Row data={tableHead} style={styles.head} textStyle={styles.text} />
-          <Rows data={formatPrayerData()} textStyle={styles.text} />
-        </Table>
-      </View>
-    </ImageBackground>
+      <SafeAreaView style={styles.tableContainer}>
+        <ScrollView style={styles.scrollView}>
+          <Text style={styles.screenText}>Azan Calendar Screen</Text>
+          <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
+            <Row data={tableHead} style={styles.head} textStyle={styles.head} />
+            <Rows data={formatPrayerData()} textStyle={styles.text} />
+          </Table>
+        </ScrollView>
+      </SafeAreaView>
   );
 };
 
@@ -188,9 +185,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     height: '100%',
   },
+  scrollView: {
+    backgroundColor: 'white',
+    marginHorizontal: 20,
+  },
   tableContainer: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-  head: { height: 40, backgroundColor: '#f1f8ff' },
-  text: { margin: 6 },
+  head: { height: 20, backgroundColor: '#dedede', fontWeight: 600, textAlign: 'center' },
+  text: { margin: 2, textAlign: 'center', },
   screenText: {
     fontSize: 24,
     color: 'white',
