@@ -20,8 +20,8 @@ const HomeScreen = () => {
     try {
       const today = new Date();
       const formattedDate = `${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
-      const latitude = 36.5451; // Замените на вашу широту
-      const longitude = 31.9974; // Замените на вашу долготу
+      const latitude = 36.5451;
+      const longitude = 31.9974;
 
       const response = await fetch(`https://api.aladhan.com/v1/timings/${formattedDate}?latitude=${latitude}&longitude=${longitude}&method=2`);
       const data = await response.json();
@@ -46,18 +46,17 @@ const HomeScreen = () => {
     const prayerDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
     const timeDiff = prayerDate - now;
 
-    // Если время до молитвы истекло, начинаем обратный отсчет
+
     if (timeDiff > 0) {
-      setCountdown(timeDiff); // Устанавливаем исходное значение времени до молитвы
+      setCountdown(timeDiff);
 
       const countdownInterval = setInterval(() => {
         setCountdown(prevCountdown => (prevCountdown > 0 ? prevCountdown - 1000 : 0));
       }, 1000);
 
-      // Остановка интервала и новый запрос после завершения обратного отсчета
       setTimeout(() => {
         clearInterval(countdownInterval);
-        fetchPrayerTimes(); // Запускаем новый запрос
+        fetchPrayerTimes();
       }, timeDiff);
 
       return () => clearInterval(countdownInterval);
@@ -86,35 +85,41 @@ const HomeScreen = () => {
 const AzanCalendarScreen = () => {
   const [prayerTimesData, setPrayerTimesData] = useState([]);
 
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth() + 1;
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  const currentMonthName = monthNames[month - 1]
+
   useEffect(() => {
-    const fetchPrayerTimes = async () => {
-      try {
-        const response = await fetch(
-          'http://api.aladhan.com/v1/calendarByCity/2017/4?city=Alanya&country=Turkey&method=2'
-        );
-        const data = await response.json();
-        const prayerData = data.data;
+  const fetchPrayerTimes = async () => {
+    try {
+      const response = await fetch(
+        `https://api.aladhan.com/v1/calendarByCity/${year}/${month}?city=Alanya&country=Turkey&method=2`
+      );
+      const data = await response.json();
+      const prayerData = data.data;
 
-        // Устанавливаем данные о времени молитв в состояние
-        setPrayerTimesData(prayerData);
-      } catch (error) {
-        console.error("Ошибка загрузки данных:", error);
-      }
-    };
+      setPrayerTimesData(prayerData);
+    } catch (error) {
+      console.error("Ошибка загрузки данных:", error);
+    }
+  };
 
-    fetchPrayerTimes();
-  }, []);
+  fetchPrayerTimes();
+}, [year, month]);
 
-  // Функция для форматирования данных в нужный вид для таблицы
   const formatPrayerData = () => {
     const formattedData = prayerTimesData.map(day => {
       const formattedDay = [];
-      const dateArray = day.date.readable.split(' '); // Разбиваем строку на массив по пробелу
-      const dateNumber = dateArray[0]; // Берем второй элемент массива (число)
+      const dateArray = day.date.readable.split(' ');
+      const dateNumber = dateArray[0];
 
       formattedDay.push(dateNumber);
 
-      // Функция для удаления (+03) из времени
       const removeTimezone = time => {
         const timeWithoutTimezone = time.split(" ")[0];
         return timeWithoutTimezone;
@@ -136,7 +141,7 @@ const AzanCalendarScreen = () => {
   return (
       <SafeAreaView style={styles.tableContainer}>
         <ScrollView style={styles.scrollView}>
-          <Text style={styles.screenText}>Azan Calendar Screen</Text>
+          <Text style={styles.screenText}>{currentMonthName} {year}</Text>
           <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
             <Row data={tableHead} style={styles.head} textStyle={styles.head} />
             <Rows data={formatPrayerData()} textStyle={styles.text} />
@@ -190,11 +195,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   tableContainer: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-  head: { height: 20, backgroundColor: '#dedede', fontWeight: 600, textAlign: 'center' },
+  head: { height: 20, paddingTop: 1, backgroundColor: '#dedede', fontWeight: 600, textAlign: 'center' },
   text: { margin: 2, textAlign: 'center', },
   screenText: {
     fontSize: 24,
-    color: 'white',
+    fontWeight: '400',
+    color: 'black',
+    textAlign: 'center',
+    marginBottom: 15,
   },
   countdownText: {
     fontSize: 32,
