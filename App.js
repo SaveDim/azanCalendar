@@ -6,6 +6,30 @@ import { Table, Row, Rows } from 'react-native-table-component';
 
 // TODO: Get gps position from user to replace variable putted into api
 
+const getUserLocationByIP = async () => {
+  try {
+    const response = await fetch('http://ip-api.com/json');
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      const { city, country, lat, lon } = data;
+      console.log('City:', city);
+      console.log('Country:', country);
+      console.log('Latitude:', lat);
+      console.log('Longitude:', lon);
+
+      return { city, country, latitude: lat, longitude: lon };
+    } else {
+      console.log('Location data not available');
+      return { city: '', country: '', latitude: '', longitude: '' };
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return { city: '', country: '', latitude: '', longitude: '' };
+  }
+};
+
+
 const HomeScreen = () => {
   const [nextPrayer, setNextPrayer] = useState("");
   const [countdown, setCountdown] = useState(0);
@@ -20,8 +44,8 @@ const HomeScreen = () => {
     try {
       const today = new Date();
       const formattedDate = `${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
-      const latitude = 36.5451;
-      const longitude = 31.9974;
+      const locationData = await getUserLocationByIP();
+      const { latitude, longitude } = locationData;
 
       const response = await fetch(`https://api.aladhan.com/v1/timings/${formattedDate}?latitude=${latitude}&longitude=${longitude}&method=2`);
       const data = await response.json();
@@ -97,8 +121,10 @@ const AzanCalendarScreen = () => {
   useEffect(() => {
   const fetchPrayerTimes = async () => {
     try {
+      const locationData = await getUserLocationByIP();
+      const { city, country } = locationData;
       const response = await fetch(
-        `https://api.aladhan.com/v1/calendarByCity/${year}/${month}?city=Alanya&country=Turkey&method=2`
+        `https://api.aladhan.com/v1/calendarByCity/${year}/${month}?city=${city}&country=${country}&method=2`
       );
       const data = await response.json();
       const prayerData = data.data;
@@ -135,7 +161,6 @@ const AzanCalendarScreen = () => {
     return formattedData;
 };
 
-  // Заголовки для таблицы
   const tableHead = ["Date", "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
   return (
@@ -174,8 +199,8 @@ const App = () => {
           activeTintColor: 'gray',
         }}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Azan Calendar" component={AzanCalendarScreen} />
+        <Tab.Screen name="Counter" component={HomeScreen} />
+        <Tab.Screen name="Calendar" component={AzanCalendarScreen} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
     </NavigationContainer>
