@@ -21,7 +21,7 @@ const getUserLocationByIP = async () => {
       return { city, country, latitude: lat, longitude: lon };
     } else {
       console.log('Location data not available');
-      return { city: '', country: '', latitude: '', longitude: '' };
+      return { city: 'Antalya', country: 'Turkey', latitude: '36.884804', longitude: '30.704044' };
     }
   } catch (error) {
     console.error('Error:', error);
@@ -231,7 +231,10 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     textAlign: 'center'
   },
-  text: { margin: 2, textAlign: 'center', },
+  text: {
+    margin: 2,
+    textAlign: 'center',
+  },
   screenText: {
     fontSize: 24,
     fontWeight: '400',
