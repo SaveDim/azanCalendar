@@ -11,7 +11,7 @@ const HomeScreen = () => {
   const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    fetchPrayerTimes(); // Запускаем запрос при загрузке компонента
+    fetchPrayerTimes();
   }, []);
 
   const validPrayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
@@ -194,8 +194,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginHorizontal: 20,
   },
-  tableContainer: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-  head: { height: 20, paddingTop: 1, backgroundColor: '#dedede', fontWeight: 600, textAlign: 'center' },
+  tableContainer: { flex: 1,
+    padding: 16,
+    paddingTop: 30,
+    backgroundColor: '#fff'
+  },
+  head: {
+    height: 20,
+    paddingTop: 1,
+    backgroundColor: '#dedede',
+    fontWeight: 600,
+    textAlign: 'center'
+  },
   text: { margin: 2, textAlign: 'center', },
   screenText: {
     fontSize: 24,
