@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {ImageBackground, StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native';
+import { ImageBackground, StyleSheet, Text, View, SafeAreaView, Alert } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Table, Row, Rows } from 'react-native-table-component';
@@ -81,6 +81,7 @@ const HomeScreen = () => {
       setTimeout(() => {
         clearInterval(countdownInterval);
         fetchPrayerTimes();
+        Alert.alert("Time to pray!");
       }, timeDiff);
 
       return () => clearInterval(countdownInterval);
@@ -100,7 +101,7 @@ const HomeScreen = () => {
       source={require('./assets/testphotos/background.jpg')}
       style={styles.backgroundImage}>
       <View style={styles.container}>
-        <Text style={styles.countdownText}>{formatTime(countdown)} before {nextPrayer}</Text>
+        <Text style={styles.countdownText}>{formatTime(countdown)} {nextPrayer}</Text>
       </View>
     </ImageBackground>
   );
@@ -165,27 +166,29 @@ const AzanCalendarScreen = () => {
 
   return (
       <SafeAreaView style={styles.tableContainer}>
-        <ScrollView style={styles.scrollView}>
+        <ImageBackground
+      source={require('./assets/testphotos/background2.jpg')}
+      style={styles.backgroundImage}>
           <Text style={styles.screenText}>{currentMonthName} {year}</Text>
-          <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
+          <Table borderStyle={{ borderWidth: 0, borderColor: '#C1C0B9' }}>
             <Row data={tableHead} style={styles.head} textStyle={styles.head} />
             <Rows data={formatPrayerData()} textStyle={styles.text} />
           </Table>
-        </ScrollView>
+        </ImageBackground>
       </SafeAreaView>
   );
 };
 
-const SettingsScreen = () => (
-  <ImageBackground
-    source={require('./assets/testphotos/background.jpg')}
-    style={styles.backgroundImage}
-  >
-    <View style={styles.container}>
-      <Text style={styles.screenText}>Settings Screen</Text>
-    </View>
-  </ImageBackground>
-);
+// const SettingsScreen = () => (
+//   <ImageBackground
+//     source={require('./assets/testphotos/background.jpg')}
+//     style={styles.backgroundImage}
+//   >
+//     <View style={styles.container}>
+//       <Text style={styles.screenText}>Settings Screen</Text>
+//     </View>
+//   </ImageBackground>
+// );
 
 const Tab = createBottomTabNavigator();
 
@@ -196,12 +199,12 @@ const App = () => {
         tabBarOptions={{
           style: styles.bottomTabBar,
           labelStyle: styles.tabLabel,
-          activeTintColor: 'gray',
+          activeTintColor: 'black',
         }}
       >
         <Tab.Screen name="Counter" component={HomeScreen} />
         <Tab.Screen name="Calendar" component={AzanCalendarScreen} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
+        {/*<Tab.Screen name="Settings" component={SettingsScreen} />*/}
       </Tab.Navigator>
     </NavigationContainer>
   );
